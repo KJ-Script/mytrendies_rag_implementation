@@ -66,6 +66,10 @@ async def processData(request: Request):
     # return response
     return request.body
 
+@app.get("/testing")
+def test():
+    return "hey"
+
 @app.post("/createResponse/")
 async def processData(item: Item):
     print("Item", item.data)
