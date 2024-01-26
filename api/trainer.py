@@ -5,7 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import DirectoryLoader
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 directory = 'database'
 embedding = OpenAIEmbeddings()
@@ -14,7 +14,7 @@ loader = DirectoryLoader('pdf', glob="./*.pdf", show_progress=True)
 documents = loader.load()
 
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=50)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 texts = text_splitter.split_documents(documents)
 
 print("text", texts[15])
