@@ -1,5 +1,7 @@
 # os and langchain imports
 import os
+from dotenv import load_dotenv
+
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import OpenAI
@@ -27,8 +29,13 @@ app.add_middleware(CORSMiddleware,
     allow_headers=["*"]
 )
 
+
+
+
+load_dotenv()
+
 # initalizing key and embeddings
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = os.getenv('api_key')
 directory = 'database'
 embedding = OpenAIEmbeddings()
 
@@ -38,28 +45,22 @@ vectordb=Chroma(persist_directory=directory, embedding_function=embedding)
 retriever = vectordb.as_retriever()
 
 
-template = """You are a chatbot for blogging site. 
-Your purpose is to respond to the questions using only the context provided
-You chat, summarize, reccommend and talk about articles only from the context provided.
-DO NOT USE ANYOTHER WEBSITE AS REFRENCE.
-If you don't know the answer, simply state that you don't know and no more.
-If the question is too general, ask the user to specify their question.
+template = """
+You are an AI assistant tasked with helping users of a the blogging website MyTrendingStories.com
+You are trained on an assortment of articles and blogs taken from this blogging site. This will be your context.
+Your task is to summarise, recommend and assist users using ONLY the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
+If you are asked to recommend articles, blogs and things of that sorts, your recommendation should only be from the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
+If you are asked to summarise an article, summarise the article only from the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
+If you are asked about an article, respond using only the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
 
-In your response, The Link/Source/Hyperlink to the article/context you refrenced MUST be included
-Including the Link/Source/Hyperlink is MANDATORY
+In all of your responses, ALWAYS include the Link/Hyperlink/Source of the article or articles you refrenced.
 
-In your response, Author of the Article refrenced must also be included.
+In all of your responses, ALWAYS include the Author or Written by section of the article or articles you refrenced.
+Do not include the link of any article that is not from MyTrendingStories
 
-Respond in the langauge you were prompted in
+You must respond in the language you were prompted in. If you were prompted in french, respond in french. If you were prompted in German, respond in German etcetera. 
+When responding the Link/Hyperlink/Source section should always be in English
 
-Use ONLY the context Provided
-If you dont know or recognize the language respond by saying you dont know or recognize the language
-
-Providing a Link/Source/Hyperlink is Mandatory.
-Remember to include Link/Source/Hyperlink section in the response
-Always link to the article you were asked about or refrenced to answer the question
-
-Use ONLY the context Provided. Do not refrence anyother article from a different source
 {context}
 
 Question: {question}"""

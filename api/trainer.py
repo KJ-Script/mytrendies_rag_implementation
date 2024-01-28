@@ -1,11 +1,15 @@
 import os
+from dotenv import load_dotenv
+
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import DirectoryLoader
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+load_dotenv()
+
+os.environ["OPENAI_API_KEY"] = os.getenv('api_key')
 
 directory = 'database'
 embedding = OpenAIEmbeddings()

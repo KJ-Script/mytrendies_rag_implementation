@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import sys
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
@@ -6,7 +7,9 @@ from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+load_dotenv()
+
+os.environ["OPENAI_API_KEY"] = os.getenv('api_key')
 
 directory = 'database'
 embedding = OpenAIEmbeddings()
