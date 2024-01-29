@@ -7,6 +7,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA, RetrievalQAWithSourcesChain
 from langchain.prompts.prompt import PromptTemplate
+from langchain.memory import ConversationBufferMemory
 
 # fast api imports
 from typing import Union
@@ -47,8 +48,9 @@ retriever = vectordb.as_retriever()
 
 template = """
 You are an AI assistant tasked with helping users of a the blogging website MyTrendingStories.com
+When you are greeted, respond back with a greeting.
 You are trained on an assortment of articles and blogs taken from this blogging site. This will be your context.
-Your task is to summarise, recommend and assist users using ONLY the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
+Your task is to summarise, recommend and assist users using ONLY the context and history provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
 If you are asked to recommend articles, blogs and things of that sorts, your recommendation should only be from the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
 If you are asked to summarise an article, summarise the article only from the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
 If you are asked about an article, respond using only the context provided. Be sure to list the Source/Link/HyperLink of the article refrenced.
@@ -63,10 +65,16 @@ When responding the Link/Hyperlink/Source section should always be in English
 
 {context}
 
+------------------------------
+
+History: {history}
+
+------------------------------
+
 Question: {question}"""
 
 PROMPT = PromptTemplate(
-    template=template, input_variables=["context", "question"]
+    template=template, input_variables=["history", "context", "question"]
 )
 
 
@@ -74,7 +82,7 @@ PROMPT = PromptTemplate(
 qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(), 
                                   chain_type="stuff", 
                                   retriever=retriever,
-                                  chain_type_kwargs={"prompt": PROMPT, }, 
+                                  chain_type_kwargs={"prompt": PROMPT, "memory": ConversationBufferMemory(memory_key="history", input_key="question")}, 
                                   return_source_documents=True)
 
 
